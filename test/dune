@@ -1,0 +1,6 @@
+(library
+ (name red_black_tree_tests)
+ (libraries base_quickcheck core red_black_tree)
+ (inline_tests)
+ (preprocess
+  (pps ppx_jane)))
