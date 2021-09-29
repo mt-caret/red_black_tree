@@ -83,28 +83,17 @@ let validate t ~compare ~sexp_of_a =
   ignore (go t : _ * _ option)
 ;;
 
-(*
 let lbalance = function
   | Tree (Black, Tree (Red, Tree (Red, a, x, b), y, c), z, d)
   | Tree (Black, Tree (Red, a, x, Tree (Red, b, y, c)), z, d) ->
-    Tree (Black, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
+    Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
   | t -> t
 ;;
 
 let rbalance = function
   | Tree (Black, a, x, Tree (Red, Tree (Red, b, y, c), z, d))
   | Tree (Black, a, x, Tree (Red, b, y, Tree (Red, c, z, d))) ->
-    Tree (Black, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
-  | t -> t
-;;
-*)
-
-let balance = function
-  | Tree (Black, Tree (Red, Tree (Red, a, x, b), y, c), z, d)
-  | Tree (Black, Tree (Red, a, x, Tree (Red, b, y, c)), z, d)
-  | Tree (Black, a, x, Tree (Red, Tree (Red, b, y, c), z, d))
-  | Tree (Black, a, x, Tree (Red, b, y, Tree (Red, c, z, d))) ->
-    Tree (Black, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
+    Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
   | t -> t
 ;;
 
@@ -113,9 +102,9 @@ let insert t x ~compare ~sexp_of_a =
     | Empty -> Tree (Red, Empty, x, Empty)
     | Tree (color, l, y, r) as t ->
       (match Ordering.of_int (compare x y) with
-      | Less -> balance (Tree (color, go l, y, r))
+      | Less -> lbalance (Tree (color, go l, y, r))
       | Equal -> t
-      | Greater -> balance (Tree (color, l, y, go r)))
+      | Greater -> rbalance (Tree (color, l, y, go r)))
   in
   match go t with
   | Empty -> raise_s [%message "should not happen" (t : a t) (x : a)]
