@@ -79,16 +79,19 @@ let validate t ~compare ~sexp_of_a =
         | None, None -> x, x
         | Some (l_min, l_max), Some (r_min, r_max) ->
           let ( < ) a b = Ordering.equal Less (Ordering.of_int (compare a b)) in
-          if not (l_max < x && x < r_min)
+          let ( <= ) a b = a < b || compare a b = 0 in
+          if not (l_min <= l_max && l_max < x && x < r_min && r_min <= r_max)
           then
             raise_s
               [%message
                 "binary tree has imbalance"
                   (l : a t)
+                  (l_min : a)
                   (l_max : a)
                   (x : a)
                   (r : a t)
-                  (r_min : a)];
+                  (r_min : a)
+                  (r_max : a)];
           l_min, r_max
         | Some min_max, None | None, Some min_max -> min_max
       in
