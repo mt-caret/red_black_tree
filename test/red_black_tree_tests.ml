@@ -37,13 +37,24 @@ let%test_unit "after insertion, the value exists" =
 ;;
 
 let%test_unit "insertion doesn't remove elements" =
-  Generator.both Int.quickcheck_generator Int.quickcheck_generator
-  |> Generator.both Red_black_tree.generator
+  Generator.both Red_black_tree.generator Int.quickcheck_generator
   |> Quickcheck.test
-       ~sexp_of:[%sexp_of: int Red_black_tree.t * (int * int)]
+       ~sexp_of:[%sexp_of: int Red_black_tree.t * int]
        ~f:
-         ([%test_pred: int Red_black_tree.t * (int * int)] (fun (tree, (x, y)) ->
-              mem tree x ==> mem (insert tree y) x))
+         ([%test_pred: int Red_black_tree.t * int] (fun (tree, x) ->
+              Red_black_tree.to_list tree
+              |> List.for_all ~f:(fun y -> mem (insert tree x) y)))
+;;
+
+let%test_unit "insertion only adds elements" =
+  Generator.both Red_black_tree.generator Int.quickcheck_generator
+  |> Quickcheck.test
+       ~sexp_of:[%sexp_of: int Red_black_tree.t * int]
+       ~f:
+         ([%test_pred: int Red_black_tree.t * int] (fun (tree, x) ->
+              let length = Red_black_tree.length tree in
+              let length' = Red_black_tree.length (insert tree x) in
+              if mem tree x then length = length' else length + 1 = length'))
 ;;
 
 let%test_unit "to_list results in a sorted list" =

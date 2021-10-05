@@ -28,6 +28,20 @@ let to_list t =
   go t []
 ;;
 
+let is_empty = function
+  | Empty -> true
+  | Tree _ -> false
+;;
+
+let length t =
+  let rec go t accum =
+    match t with
+    | Empty -> accum
+    | Tree (_, l, _, r) -> (go [@tailcall]) l (go r (accum + 1))
+  in
+  go t 0
+;;
+
 let rec mem t x ~compare =
   match t with
   | Empty -> false
