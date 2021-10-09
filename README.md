@@ -10,10 +10,14 @@ todo
 - [ ] "A Pedagogically Sound yet Efficient Deletion algorithm for Red-Black Trees: The Parity-Seeking Delete Algorithm"
 - [ ] "Functional Algorithms, Verified!"
 - [ ] "Experience Report: Type-Driven Development of Certified Tree Algorithms in Coq"
-- [ ] presumably red-black trees require less rebalancing, which seems to
-      cut against in the purely functional setting; can we replicate
-      pathological cases which require rebalancing over and over again?
-      look to "Construct Red-Black Trees" to understand issue better
+- [ ] "Red-Black Trees with Types"
+
+notes
+
+- presumably red-black trees require less rebalancing, which seems to cut
+  against in the purely functional setting; can we replicate pathological cases
+  which require rebalancing over and over again?  look to "Construct Red-Black
+  Trees" to understand issue better
 
 benchmarks
 
