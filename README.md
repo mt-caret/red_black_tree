@@ -27,9 +27,9 @@ Estimated testing time 40s (4 benchmarks x 10s). Change using '-quota'.
 
   Name                     Time/Run      mWd/Run   mjWd/Run   Prom/Run   Percentage
  ------------------------ ---------- ------------ ---------- ---------- ------------
-  Red_black_tree.of_list     2.51ms   1_121.05kw    70.73kw    70.73kw       93.19%
-  Core.Set.of_list           2.69ms     941.54kw    60.61kw    60.61kw      100.00%
-  Red_black_tree.mem         1.48ms                                          54.84%
-  Core.Set.mem               1.34ms                                          49.84%
+  Red_black_tree.of_list     2.33ms   1_121.05kw    70.77kw    70.77kw       85.59%
+  Core.Set.of_list           2.73ms     941.54kw    60.61kw    60.61kw      100.00%
+  Red_black_tree.mem         1.08ms                                          39.55%
+  Core.Set.mem               1.35ms                                          49.33%
 
 ```

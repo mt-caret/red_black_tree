@@ -47,10 +47,10 @@ let rec mem t x ~compare =
   match t with
   | Empty -> false
   | Tree (_, l, y, r) ->
-    (match Ordering.of_int (compare x y) with
-    | Less -> mem l x ~compare
-    | Equal -> true
-    | Greater -> mem r x ~compare)
+    (match compare x y with
+    | 0 -> true
+    | n when n < 0 -> mem l x ~compare
+    | _ -> mem r x ~compare)
 ;;
 
 let rec min_elt t =
@@ -135,15 +135,15 @@ let insert t x ~compare ~sexp_of_a =
     | Tree (Red, l, y, r) as t ->
       (* Noting that Okasaki's [balance] implementation only rebalances when
        * the color is black, we skip the balance call here. *)
-      (match Ordering.of_int (compare x y) with
-      | Less -> Tree (Red, go l, y, r)
-      | Equal -> t
-      | Greater -> Tree (Red, l, y, go r))
+      (match compare x y with
+      | 0 -> t
+      | n when n < 0 -> Tree (Red, go l, y, r)
+      | _ -> Tree (Red, l, y, go r))
     | Tree (Black, l, y, r) as t ->
-      (match Ordering.of_int (compare x y) with
-      | Less -> lbalance (go l) y r
-      | Equal -> t
-      | Greater -> rbalance l y (go r))
+      (match compare x y with
+      | 0 -> t
+      | n when n < 0 -> lbalance (go l) y r
+      | _ -> rbalance l y (go r))
   in
   match go t with
   | Empty -> raise_s [%message "should not happen" (t : a t) (x : a)]
