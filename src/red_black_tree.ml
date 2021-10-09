@@ -1,5 +1,6 @@
 open Core
 
+(** Implementation of Okasaki's Red-Black trees *)
 module Color = struct
   type t =
     | Red
@@ -114,33 +115,101 @@ let validate t ~compare ~sexp_of_a =
   ignore (go t : _ * _ option)
 ;;
 
-let lbalance = function
-  | Tree (Black, Tree (Red, Tree (Red, a, x, b), y, c), z, d)
-  | Tree (Black, Tree (Red, a, x, Tree (Red, b, y, c)), z, d) ->
+let lbalance l z d =
+  match l with
+  | Tree (Red, Tree (Red, a, x, b), y, c) | Tree (Red, a, x, Tree (Red, b, y, c)) ->
     Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
-  | t -> t
+  | _ -> Tree (Black, l, z, d)
 ;;
 
-let rbalance = function
-  | Tree (Black, a, x, Tree (Red, Tree (Red, b, y, c), z, d))
-  | Tree (Black, a, x, Tree (Red, b, y, Tree (Red, c, z, d))) ->
+let rbalance a x r =
+  match r with
+  | Tree (Red, Tree (Red, b, y, c), z, d) | Tree (Red, b, y, Tree (Red, c, z, d)) ->
     Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
-  | t -> t
+  | _ -> Tree (Black, a, x, r)
 ;;
 
 let insert t x ~compare ~sexp_of_a =
   let rec go = function
     | Empty -> Tree (Red, Empty, x, Empty)
-    | Tree (color, l, y, r) as t ->
+    | Tree (Red, l, y, r) as t ->
+      (* Noting that Okasaki's [balance] implementation only rebalances when
+       * the color is black, we skip the balance call here. *)
       (match Ordering.of_int (compare x y) with
-      | Less -> lbalance (Tree (color, go l, y, r))
+      | Less -> Tree (Red, go l, y, r)
       | Equal -> t
-      | Greater -> rbalance (Tree (color, l, y, go r)))
+      | Greater -> Tree (Red, l, y, go r))
+    | Tree (Black, l, y, r) as t ->
+      (match Ordering.of_int (compare x y) with
+      | Less -> lbalance (go l) y r
+      | Equal -> t
+      | Greater -> rbalance l y (go r))
   in
   match go t with
   | Empty -> raise_s [%message "should not happen" (t : a t) (x : a)]
   | Tree (_, l, y, r) -> Tree (Black, l, y, r)
 ;;
+
+(*
+(* The implementation for Exercise 3.10 (b) is as follows, but it actually
+ * seems to degrade performance, so we don't use it.  *)
+(* TODO: revisit *)
+let llbalance color l x r =
+  match color, l, x, r with
+  | Color.Black, Tree (Red, Tree (Red, a, x, b), y, c), z, d ->
+    Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
+  | _ -> Tree (color, l, x, r)
+;;
+
+let lrbalance color l x r =
+  match color, l, x, r with
+  | Color.Black, Tree (Red, a, x, Tree (Red, b, y, c)), z, d ->
+    Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
+  | _ -> Tree (color, l, x, r)
+;;
+
+let rlbalance color l x r =
+  match color, l, x, r with
+  | Color.Black, a, x, Tree (Red, Tree (Red, b, y, c), z, d) ->
+    Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
+  | _ -> Tree (color, l, x, r)
+;;
+
+let rrbalance color l x r =
+  match color, l, x, r with
+  | Color.Black, a, x, Tree (Red, b, y, Tree (Red, c, z, d)) ->
+    Tree (Red, Tree (Black, a, x, b), y, Tree (Black, c, z, d))
+  | _ -> Tree (color, l, x, r)
+;;
+
+let insert t x ~compare ~sexp_of_a =
+  let rec go = function
+    | Empty -> Ordering.Equal, Tree (Red, Empty, x, Empty)
+    | Tree (color, l, y, r) as t ->
+      let ordering = Ordering.of_int (compare x y) in
+      ( ordering
+      , (match ordering with
+        | Less ->
+          (match go l with
+          | Less, l' -> llbalance color l' y r
+          | Equal, l' ->
+            (* If [color = Red] and [l = Empty], I feel like this would result
+             * in a red-red violation, but I can't figure out a way to
+             * reproduce this case... *)
+            Tree (color, l', y, r)
+          | Greater, l' -> lrbalance color l' y r)
+        | Equal -> t
+        | Greater ->
+          (match go r with
+          | Less, r' -> rlbalance color l y r'
+          | Equal, r' -> Tree (color, l, y, r')
+          | Greater, r' -> rrbalance color l y r')) )
+  in
+  match go t with
+  | _, Empty -> raise_s [%message "should not happen" (t : a t) (x : a)]
+  | _, Tree (_, l, y, r) -> Tree (Black, l, y, r)
+;;
+ *)
 
 let of_list xs ~compare ~sexp_of_a =
   List.fold xs ~init:empty ~f:(fun accum x -> insert accum x ~compare ~sexp_of_a)
