@@ -1,0 +1,5 @@
+(executable
+ (name bench_red_black_tree)
+ (libraries core core_bench red_black_tree)
+ (preprocess
+  (pps ppx_jane -allow-unannotated-ignores)))

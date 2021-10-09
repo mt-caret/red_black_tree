@@ -10,3 +10,17 @@ todo
 - [ ] "A Pedagogically Sound yet Efficient Deletion algorithm for Red-Black Trees: The Parity-Seeking Delete Algorithm"
 - [ ] "Functional Algorithms, Verified!"
 - [ ] "Experience Report: Type-Driven Development of Certified Tree Algorithms in Coq"
+
+benchmarks
+
+```
+Estimated testing time 40s (4 benchmarks x 10s). Change using '-quota'.
+┌────────────────────────┬──────────┬────────────┬──────────┬──────────┬────────────┐
+│ Name                   │ Time/Run │    mWd/Run │ mjWd/Run │ Prom/Run │ Percentage │
+├────────────────────────┼──────────┼────────────┼──────────┼──────────┼────────────┤
+│ Red_black_tree.of_list │   2.80ms │ 1_170.96kw │  71.05kw │  71.05kw │    100.00% │
+│ Core.Set.of_list       │   2.59ms │   941.54kw │  60.62kw │  60.62kw │     92.24% │
+│ Red_black_tree.mem     │   1.49ms │            │          │          │     53.13% │
+│ Core.Set.mem           │   1.27ms │            │          │          │     45.39% │
+└────────────────────────┴──────────┴────────────┴──────────┴──────────┴────────────┘
+```
