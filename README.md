@@ -26,13 +26,17 @@ notes
 benchmarks
 
 ```
-Estimated testing time 40s (4 benchmarks x 10s). Change using '-quota'.
+Estimated testing time 1m20s (8 benchmarks x 10s). Change using '-quota'.
 
-  Name                     Time/Run      mWd/Run   mjWd/Run   Prom/Run   Percentage
- ------------------------ ---------- ------------ ---------- ---------- ------------
-  Red_black_tree.of_list     2.33ms   1_121.05kw    70.77kw    70.77kw       85.59%
-  Core.Set.of_list           2.73ms     941.54kw    60.61kw    60.61kw      100.00%
-  Red_black_tree.mem         1.08ms                                          39.55%
-  Core.Set.mem               1.35ms                                          49.33%
+  Name                           Time/Run      mWd/Run     mjWd/Run     Prom/Run   Percentage
+ ------------------------ ---------------- ------------ ------------ ------------ ------------
+  Red_black_tree.of_list   2_417_529.01ns   1_121.05kw   70_774.53w   70_774.53w       67.93%
+  Core.Set.of_list         2_935_892.63ns     941.54kw   60_623.57w   60_623.57w       82.49%
+  Red_black_tree.length       28_950.83ns                                               0.81%
+  Core.Set.length                  2.82ns
+  Red_black_tree.mem       1_148_047.15ns                                              32.26%
+  Core.Set.mem             1_407_632.37ns                                              39.55%
+  Red_black_tree.add       1_961_018.33ns   1_200.00kw      171.53w      171.53w       55.10%
+  Core.Set.add             3_559_006.03ns   1_140.00kw      219.81w      219.81w      100.00%
 
 ```

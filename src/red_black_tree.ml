@@ -139,9 +139,9 @@ let add t x ~compare ~sexp_of_a =
        * the color is black, we skip the balance call here. *)
       (match compare x y with
       | 0 ->
-        (* When an element already exists in the tree, we throw an exception
-         * to escape out of recursion to avoid rebuilding the tree (Exercise
-         * 2.3). *)
+        (* When an element already exists in the tree, we throw an exception to
+         * escape out of recursion to avoid rebuilding the tree (Exercise 2.3).
+         *)
         raise Element_exists
       | n when n < 0 -> Tree (Red, go l, y, r)
       | _ -> Tree (Red, l, y, go r))
