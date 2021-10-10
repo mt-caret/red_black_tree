@@ -3,11 +3,8 @@ open Core_bench
 
 let size = 10_000
 let compare = Int.compare
-
-let create () =
-  List.init size ~f:Fn.id |> Red_black_tree.of_list ~compare ~sexp_of_a:Int.sexp_of_t
-;;
-
+let sexp_of_a = Int.sexp_of_t
+let create () = List.init size ~f:Fn.id |> Red_black_tree.of_list ~compare ~sexp_of_a
 let core_set_create () = List.init size ~f:Fn.id |> Int.Set.of_list
 
 let () =
@@ -22,5 +19,10 @@ let () =
              List.iter to_check ~f:(fun x -> Red_black_tree.mem t x ~compare |> ignore))
        ; Bench.Test.create ~name:"Core.Set.mem" (fun () ->
              List.iter to_check ~f:(fun x -> Set.mem set x |> ignore))
+       ; Bench.Test.create ~name:"Red_black_tree.add" (fun () ->
+             List.iter to_check ~f:(fun x ->
+                 Red_black_tree.add t x ~compare ~sexp_of_a |> ignore))
+       ; Bench.Test.create ~name:"Core.Set.add" (fun () ->
+             List.iter to_check ~f:(fun x -> Set.add set x |> ignore))
        ])
 ;;

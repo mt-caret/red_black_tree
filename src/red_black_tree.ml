@@ -129,25 +129,34 @@ let rbalance a x r =
   | _ -> Tree (Black, a, x, r)
 ;;
 
-let insert t x ~compare ~sexp_of_a =
+exception Element_exists
+
+let add t x ~compare ~sexp_of_a =
   let rec go = function
     | Empty -> Tree (Red, Empty, x, Empty)
-    | Tree (Red, l, y, r) as t ->
+    | Tree (Red, l, y, r) ->
       (* Noting that Okasaki's [balance] implementation only rebalances when
        * the color is black, we skip the balance call here. *)
       (match compare x y with
-      | 0 -> t
+      | 0 ->
+        (* When an element already exists in the tree, we throw an exception
+         * to escape out of recursion to avoid rebuilding the tree (Exercise
+         * 2.3). *)
+        raise Element_exists
       | n when n < 0 -> Tree (Red, go l, y, r)
       | _ -> Tree (Red, l, y, go r))
-    | Tree (Black, l, y, r) as t ->
+    | Tree (Black, l, y, r) ->
       (match compare x y with
-      | 0 -> t
+      | 0 -> raise Element_exists
       | n when n < 0 -> lbalance (go l) y r
       | _ -> rbalance l y (go r))
   in
-  match go t with
-  | Empty -> raise_s [%message "should not happen" (t : a t) (x : a)]
-  | Tree (_, l, y, r) -> Tree (Black, l, y, r)
+  try
+    match go t with
+    | Empty -> raise_s [%message "should not happen" (t : a t) (x : a)]
+    | Tree (_, l, y, r) -> Tree (Black, l, y, r)
+  with
+  | Element_exists -> t
 ;;
 
 (*
@@ -182,7 +191,7 @@ let rrbalance color l x r =
   | _ -> Tree (color, l, x, r)
 ;;
 
-let insert t x ~compare ~sexp_of_a =
+let add t x ~compare ~sexp_of_a =
   let rec go = function
     | Empty -> Ordering.Equal, Tree (Red, Empty, x, Empty)
     | Tree (color, l, y, r) as t ->
@@ -212,7 +221,7 @@ let insert t x ~compare ~sexp_of_a =
  *)
 
 let of_list xs ~compare ~sexp_of_a =
-  List.fold xs ~init:empty ~f:(fun accum x -> insert accum x ~compare ~sexp_of_a)
+  List.fold xs ~init:empty ~f:(fun accum x -> add accum x ~compare ~sexp_of_a)
 ;;
 
 (* A generator for arbitrary red-black trees, based on

@@ -24,16 +24,14 @@ let%test_unit "trees are valid" =
     ~f:(Red_black_tree.validate ~compare ~sexp_of_a)
 ;;
 
-let insert = Red_black_tree.insert ~compare ~sexp_of_a
+let add = Red_black_tree.add ~compare ~sexp_of_a
 let mem = Red_black_tree.mem ~compare
 
 let%test_unit "after insertion, the value exists" =
   Generator.both Red_black_tree.generator Int.quickcheck_generator
   |> Quickcheck.test
        ~sexp_of:[%sexp_of: int Red_black_tree.t * int]
-       ~f:
-         ([%test_pred: int Red_black_tree.t * int] (fun (tree, x) ->
-              mem (insert tree x) x))
+       ~f:([%test_pred: int Red_black_tree.t * int] (fun (tree, x) -> mem (add tree x) x))
 ;;
 
 let%test_unit "insertion doesn't remove elements" =
@@ -42,8 +40,7 @@ let%test_unit "insertion doesn't remove elements" =
        ~sexp_of:[%sexp_of: int Red_black_tree.t * int]
        ~f:
          ([%test_pred: int Red_black_tree.t * int] (fun (tree, x) ->
-              Red_black_tree.to_list tree
-              |> List.for_all ~f:(fun y -> mem (insert tree x) y)))
+              Red_black_tree.to_list tree |> List.for_all ~f:(fun y -> mem (add tree x) y)))
 ;;
 
 let%test_unit "insertion only adds elements" =
@@ -53,7 +50,7 @@ let%test_unit "insertion only adds elements" =
        ~f:
          ([%test_pred: int Red_black_tree.t * int] (fun (tree, x) ->
               let length = Red_black_tree.length tree in
-              let length' = Red_black_tree.length (insert tree x) in
+              let length' = Red_black_tree.length (add tree x) in
               if mem tree x then length = length' else length + 1 = length'))
 ;;
 
