@@ -7,7 +7,7 @@ todo
 - [ ] "Efficient Verified Red-Black Trees"
 - [ ] "Deletion: The Curse of the Red-Black Tree"
 - [ ] benchmark (against Core maps, HAMTs, [purely functional B-trees?](https://news.ycombinator.com/item?id=23002849))
-  - [] HAMTs
+  - [ ] HAMTs
     - <https://worace.works/2016/05/24/hash-array-mapped-tries/>
     - "Ideal Hash Trees"
 - [ ] "A Pedagogically Sound yet Efficient Deletion algorithm for Red-Black Trees: The Parity-Seeking Delete Algorithm"
