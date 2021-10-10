@@ -7,10 +7,16 @@ let sexp_of_a = Int.sexp_of_t
 module Red_black_tree = struct
   let of_int_list = Red_black_tree.of_list ~compare ~sexp_of_a
 
+  let increasing_iterator_generator =
+    let%map.Generator size = Generator.size in
+    Red_black_tree.of_increasing_iterator_unchecked ~len:size ~f:Fn.id
+  ;;
+
   let generator =
     Generator.union
       [ Red_black_tree.int_generator
       ; List.quickcheck_generator Int.quickcheck_generator |> Generator.map ~f:of_int_list
+      ; increasing_iterator_generator
       ]
   ;;
 
@@ -22,6 +28,20 @@ let%test_unit "trees are valid" =
     Red_black_tree.generator
     ~sexp_of:[%sexp_of: int Red_black_tree.t]
     ~f:(Red_black_tree.validate ~compare ~sexp_of_a)
+;;
+
+let%test_unit "of_increasing_iterator_unchecked generates trees of optimal height" =
+  Quickcheck.test
+    Red_black_tree.increasing_iterator_generator
+    ~sexp_of:[%sexp_of: int Red_black_tree.t]
+    ~f:(fun tree -> Red_black_tree.validate_optimal_height tree ~sexp_of_a)
+;;
+
+let%test_unit "of_increasing_iterator_unchecked generates trees of optimal height" =
+  Generator.both Red_black_tree.increasing_iterator_generator Generator.size
+  |> Quickcheck.test
+       ~sexp_of:[%sexp_of: int Red_black_tree.t * int]
+       ~f:(fun (tree, size) -> [%test_eq: int] (Red_black_tree.length tree) size)
 ;;
 
 let add = Red_black_tree.add ~compare ~sexp_of_a

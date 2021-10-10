@@ -15,9 +15,14 @@ let () =
     (Bench.make_command
        [ Bench.Test.create ~name:"Red_black_tree.of_list" create
        ; Bench.Test.create ~name:"Core.Set.of_list" core_set_create
+       ; Bench.Test.create
+           ~name:"Red_black_tree.of_increasing_iterator_unchecked"
+           (fun () -> Red_black_tree.of_increasing_iterator_unchecked ~len:size ~f:Fn.id)
+       ; Bench.Test.create ~name:"Set.of_increasing_iterator_unchecked" (fun () ->
+             Int.Set.of_increasing_iterator_unchecked ~len:size ~f:Fn.id)
        ; Bench.Test.create ~name:"Red_black_tree.length" (fun () ->
-             Red_black_tree.length t |> ignore)
-       ; Bench.Test.create ~name:"Core.Set.length" (fun () -> Set.length set |> ignore)
+             Red_black_tree.length t)
+       ; Bench.Test.create ~name:"Core.Set.length" (fun () -> Set.length set)
        ; Bench.Test.create ~name:"Red_black_tree.mem" (fun () ->
              List.iter to_check ~f:(fun x -> Red_black_tree.mem t x ~compare |> ignore))
        ; Bench.Test.create ~name:"Core.Set.mem" (fun () ->

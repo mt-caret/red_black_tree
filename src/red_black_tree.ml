@@ -115,6 +115,56 @@ let validate t ~compare ~sexp_of_a =
   ignore (go t : _ * _ option)
 ;;
 
+(* We can construct minimum-height red-black trees rather easily by imposing
+ * the following constraints:
+ * (1) all nodes on each level have the same color
+ * (2) the lowermost nodes are colored red
+ *
+ * Exercise 3.9 can be solved with something like this:
+ * (fun l ->
+ *   let a = Array.of_list l in
+ *   of_increasing_iterator_unchecked
+ *     ~len:(Array.length a)
+ *     ~f:(Array.get a))
+ * *)
+let of_increasing_iterator_unchecked ~len ~f =
+  let rec go color left right =
+    if left = right
+    then Empty
+    else (
+      let mid = (left + right) / 2 in
+      let color' =
+        match color with
+        | Color.Red -> Color.Black
+        | Black -> Red
+      in
+      Tree (color, go color' left mid, f mid, go color' (mid + 1) right))
+  in
+  let root_color = if len = 0 || Int.floor_log2 len % 2 = 1 then Color.Black else Red in
+  go root_color 0 len
+;;
+
+let validate_optimal_height t ~sexp_of_a =
+  let rec go = function
+    | Empty -> 0
+    | Tree (_, l, _, r) ->
+      let l_height = go l in
+      let r_height = go r in
+      if abs (l_height - r_height) > 1
+      then
+        raise_s
+          [%message
+            "depth more than 1 different"
+              (l_height : int)
+              (l : a t)
+              (r_height : int)
+              (r : a t)
+              (t : a t)];
+      l_height + 1
+  in
+  ignore (go t : int)
+;;
+
 let lbalance l z d =
   match l with
   | Tree (Red, Tree (Red, a, x, b), y, c) | Tree (Red, a, x, Tree (Red, b, y, c)) ->
