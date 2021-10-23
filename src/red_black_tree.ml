@@ -321,3 +321,51 @@ let int_generator =
   let max_value = Int.pow 2 ((2 * height) + 1) - 2 in
   tree ~min:0 ~max:max_value Black |> Generator.with_size ~size:height
 ;;
+
+module Zipper = struct
+  (* The type is based off on an example given in a talk
+   * (https://www.youtube.com/watch?v=K7tQsKxC2I8) presenting Conor Mcbride's
+   * "The Derivative of a Regular Type is its Type of One-Hole Contexts". *)
+  type nonrec 'a t =
+    { path : ([ `Left | `Right ] * Color.t * 'a * 'a t) list
+    ; color : Color.t
+    ; left : 'a t
+    ; value : 'a
+    ; right : 'a t
+    }
+
+  let up t =
+    match t.path with
+    | [] -> t
+    | (`Left, color, value, right) :: path ->
+      { path; color; left = Tree (t.color, t.left, t.value, t.right); value; right }
+    | (`Right, color, value, left) :: path ->
+      { path; color; left; value; right = Tree (t.color, t.left, t.value, t.right) }
+  ;;
+
+  let left_child t =
+    match t.left with
+    | Empty -> t
+    | Tree (color, left, value, right) ->
+      { path = (`Left, t.color, t.value, t.right) :: t.path; color; left; value; right }
+  ;;
+
+  let right_child t =
+    match t.left with
+    | Empty -> t
+    | Tree (color, left, value, right) ->
+      { path = (`Right, t.color, t.value, t.left) :: t.path; color; left; value; right }
+  ;;
+
+  (* TODO: implement *)
+  (*
+  let rec create tree x ~compare =
+    match tree with
+    | Empty -> None
+    | Tree (color, l, y, r) ->
+    (match compare x y with
+    | 0 -> Some { path = []; color; left = l; value = y; right = r }
+    | n when n < 0 -> mem l x ~compare
+    | _ -> mem r x ~compare)
+    *)
+end
