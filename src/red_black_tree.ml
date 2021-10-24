@@ -1,4 +1,6 @@
 open Core
+module Persistent_array = Persistent_array
+module Persistent_array_intf = Persistent_array_intf
 
 (** Implementation of Okasaki's Red-Black trees *)
 module Color = struct

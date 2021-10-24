@@ -1,4 +1,5 @@
 open Core
+open Base_quickcheck
 open Quickcheck
 
 let compare = Int.compare

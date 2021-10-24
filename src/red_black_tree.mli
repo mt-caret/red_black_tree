@@ -1,4 +1,6 @@
 open! Core
+module Persistent_array = Persistent_array
+module Persistent_array_intf = Persistent_array_intf
 
 type 'a t [@@deriving sexp, compare, equal]
 
