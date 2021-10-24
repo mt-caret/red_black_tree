@@ -15,6 +15,7 @@ todo
 - [ ] "Experience Report: Type-Driven Development of Certified Tree Algorithms in Coq"
 - [ ] "Red-Black Trees with Types"
 - [ ] benchmark properly (flambda, proper machine, etc.)
+- [ ] [denotational homomorphic testing](https://www.tweag.io/blog/2021-10-13-homomorphic-testing/) (lol)
 
 benchmarks
 
