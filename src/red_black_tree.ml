@@ -192,12 +192,12 @@ let add t x ~compare ~sexp_of_a =
         (* When an element already exists in the tree, we throw an exception to
          * escape out of recursion to avoid rebuilding the tree (Exercise 2.3).
          *)
-        raise Element_exists
+        Exn.raise_without_backtrace Element_exists
       | n when n < 0 -> Tree (Red, go l, y, r)
       | _ -> Tree (Red, l, y, go r))
     | Tree (Black, l, y, r) ->
       (match compare x y with
-      | 0 -> raise Element_exists
+      | 0 -> Exn.raise_without_backtrace Element_exists
       | n when n < 0 -> lbalance (go l) y r
       | _ -> rbalance l y (go r))
   in
