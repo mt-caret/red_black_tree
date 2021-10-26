@@ -182,11 +182,16 @@ let rbalance a x r =
 exception Element_exists
 
 let add t x ~compare ~sexp_of_a =
+  (* [go] returns a tree that may have a red-red violation at the root, but
+   * otherwise is a valid red-black tree. *)
   let rec go = function
     | Empty -> Tree (Red, Empty, x, Empty)
     | Tree (Red, l, y, r) ->
-      (* Noting that Okasaki's [balance] implementation only rebalances when
-       * the color is black, we skip the balance call here. *)
+      (* [go] can only return a tree with red-red violations in this branch
+       * (i.e. when inserting into a red-rooted tree). This means that there is
+       * no need to call the rebalance functions when calling [go] in this
+       * branch, since both [l] and [r] are guaranteed to be black-rooted
+       * trees. *)
       (match compare x y with
       | 0 ->
         (* When an element already exists in the tree, we throw an exception to

@@ -16,6 +16,7 @@ todo
 - [ ] "Red-Black Trees with Types"
 - [ ] benchmark properly (flambda, proper machine, etc.)
 - [ ] [denotational homomorphic testing](https://www.tweag.io/blog/2021-10-13-homomorphic-testing/) (lol)
+- [ ] randomize the order of insertion into the tree in benchmarks?
 
 benchmarks
 
