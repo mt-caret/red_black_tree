@@ -357,6 +357,30 @@ module Zipper = struct
       { path = (`Right, t.color, t.value, t.left) :: t.path; color; left; value; right }
   ;;
 
+  let value_lbound t =
+    match max_elt t.left with
+    | Some _ as lbound -> lbound
+    | None ->
+      let rec go = function
+        | [] -> None
+        | (`Right, _, x, _) :: _ -> Some x
+        | (`Left, _, _, _) :: rest -> go rest
+      in
+      go t.path
+  ;;
+
+  let value_rbound t =
+    match min_elt t.right with
+    | Some _ as rbound -> rbound
+    | None ->
+      let rec go = function
+        | [] -> None
+        | (`Left, _, x, _) :: _ -> Some x
+        | (`Right, _, _, _) :: rest -> go rest
+      in
+      go t.path
+  ;;
+
   (* TODO: implement *)
   (*
   let rec create tree x ~compare =
